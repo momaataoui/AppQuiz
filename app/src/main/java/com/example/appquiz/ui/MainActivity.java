@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         setupQuestions();
         setupTimer();
         updateBestScoreDisplay();
+        setupBackNavigation();
 
         setupOptionClickListeners();
 
@@ -104,6 +106,20 @@ public class MainActivity extends AppCompatActivity {
         btnGoToHistory.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
             startActivity(intent);
+        });
+    }
+
+    private void setupBackNavigation() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (!isInCategorySelection) {
+                    resetQuiz();
+                } else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
         });
     }
 
