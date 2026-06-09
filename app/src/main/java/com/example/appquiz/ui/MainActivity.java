@@ -47,12 +47,16 @@ public class MainActivity extends AppCompatActivity {
     private final TextView[] optionLetters = new TextView[4];
     private MaterialButton btnNext;
     private View btnGoToHistory;
+    private View categoryLayout;
+    private View quizLayout;
 
     private List<Question> questionList;
     private int currentQuestionIndex = 0;
     private int score = 0;
     private boolean isAnswerChecked = false;
+    private boolean isInCategorySelection = true;
     private int selectedOptionIndex = -1;
+    private String selectedCategory = "android";
 
     private DatabaseHelper dbHelper;
     private SharedPreferences sharedPreferences;
@@ -74,11 +78,10 @@ public class MainActivity extends AppCompatActivity {
         toneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 
         bindViews();
+        setupCategorySelection();
         setupQuestions();
         setupTimer();
         updateBestScoreDisplay();
-        loadQuestion(currentQuestionIndex);
-        timer.start();
 
         setupOptionClickListeners();
 
@@ -105,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void bindViews() {
+        categoryLayout = findViewById(R.id.categoryLayout);
+        quizLayout = findViewById(R.id.quizLayout);
         bestScoreText = findViewById(R.id.bestScoreText);
         txtProgress = findViewById(R.id.txtProgress);
         txtCurrentScore = findViewById(R.id.txtCurrentScore);
@@ -124,6 +129,54 @@ public class MainActivity extends AppCompatActivity {
         }
         btnNext = findViewById(R.id.btnNext);
         btnGoToHistory = findViewById(R.id.btnGoToHistory);
+    }
+
+    private void setupCategorySelection() {
+        int[][] cardIds = {
+                {R.id.cardCategoryAndroid},
+                {R.id.cardCategoryPython},
+                {R.id.cardCategoryReseaux},
+                {R.id.cardCategorySQL},
+                {R.id.cardCategoryLinux}
+        };
+        String[] categories = {"android", "python", "reseaux", "sql", "linux"};
+
+        for (int i = 0; i < cardIds.length; i++) {
+            final String cat = categories[i];
+            findViewById(cardIds[i][0]).setOnClickListener(v -> {
+                selectedCategory = cat;
+                startQuizWithCategory(cat);
+            });
+        }
+    }
+
+    private void startQuizWithCategory(String category) {
+        isInCategorySelection = false;
+        categoryLayout.animate().alpha(0f).setDuration(250).withEndAction(() -> {
+            categoryLayout.setVisibility(View.GONE);
+            quizLayout.setVisibility(View.VISIBLE);
+            quizLayout.setAlpha(0f);
+            quizLayout.animate().alpha(1f).setDuration(300).start();
+        }).start();
+
+        setupQuestions();
+        List<Question> filtered = new ArrayList<>();
+        for (Question q : questionList) {
+            if (q.getCategory().equals(category)) {
+                filtered.add(q);
+            }
+        }
+        questionList = filtered;
+
+        currentQuestionIndex = 0;
+        score = 0;
+        txtCurrentScore.setText(getString(R.string.current_score, 0));
+        loadQuestion(0);
+        if (timer != null) {
+            timer.cancel();
+        }
+        setupTimer();
+        timer.start();
     }
 
     private void setupOptionClickListeners() {
