@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Quiz Éducatif</string>
+    <string name="title_history">Historique des Scores</string>
+    <string name="best_score_label">Meilleur Score : %1$d/%2$d</string>
+    <string name="no_best_score">Meilleur Score : Aucun</string>
+    
+    <string name="question_progress">Question %1$d / %2$d</string>
+    <string name="current_score">Score Actuel : %1$d</string>
+    
+    <string name="btn_next">Suivant</string>
+    <string name="btn_finish">Terminer</string>
+    <string name="btn_history">Historique</string>
+    <string name="btn_restart">Recommencer</string>
+    <string name="btn_clear_history">Effacer l\'Historique</string>
+    <string name="text_no_history">Aucun score enregistré pour le moment.</string>
+    
+    <!-- Success/Failure Dialogs -->
+    <string name="quiz_completed_title">Quiz Terminé !</string>
+    <string name="quiz_completed_msg">Votre score final est de %1$d sur %2$d.\nUn nouveau record ? %3$s</string>
+    <string name="new_record_yes">Oui ! Félicitations !</string>
+    <string name="new_record_no">Non, continuez à vous entraîner !</string>
+    <string name="btn_ok">OK</string>
+</resources>

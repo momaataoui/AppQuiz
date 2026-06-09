@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand colors -->
+    <color name="primary">#4F46E5</color>
+    <color name="primary_dark">#3730A3</color>
+    <color name="accent">#06B6D4</color>
+    
+    <!-- Backgrounds -->
+    <color name="background">#F8FAFC</color>
+    <color name="card_background">#FFFFFF</color>
+    
+    <!-- Text colors -->
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="text_white">#FFFFFF</color>
+    
+    <!-- Option states -->
+    <color name="correct_bg">#DCFCE7</color>
+    <color name="correct_border">#22C55E</color>
+    <color name="correct_text">#15803D</color>
+    
+    <color name="incorrect_bg">#FEE2E2</color>
+    <color name="incorrect_border">#EF4444</color>
+    <color name="incorrect_text">#B91C1C</color>
+    
+    <!-- UI components -->
+    <color name="border_color">#E2E8F0</color>
+    <color name="selected_border">#818CF8</color>
+    <color name="selected_bg">#EEF2FF</color>
+</resources>
