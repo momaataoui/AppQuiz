@@ -11,15 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.appquiz.adapter.ScoreAdapter;
 import com.example.appquiz.database.DatabaseHelper;
 import com.example.appquiz.databinding.ActivityHistoryBinding;
 import com.example.appquiz.model.ScoreRecord;
 import com.example.appquiz.viewmodel.HistoryViewModel;
-import com.google.android.material.button.MaterialButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
@@ -45,7 +44,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         // Setup RecyclerView
         binding.recyclerViewScores.setLayoutManager(new LinearLayoutManager(this));
-        scoreAdapter = new ScoreAdapter(new java.util.ArrayList<>());
+        scoreAdapter = new ScoreAdapter(new ArrayList<>());
         binding.recyclerViewScores.setAdapter(scoreAdapter);
 
         // Observe scores LiveData
@@ -53,14 +52,9 @@ public class HistoryActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<ScoreRecord> scores) {
                 if (scores == null || scores.isEmpty()) {
-                    binding.recyclerViewScores.setVisibility(View.GONE);
-                    binding.layoutEmptyState.setVisibility(View.VISIBLE);
-                    binding.btnClearHistory.setVisibility(View.GONE);
+                    showScores(new ArrayList<>());
                 } else {
-                    binding.recyclerViewScores.setVisibility(View.VISIBLE);
-                    binding.layoutEmptyState.setVisibility(View.GONE);
-                    binding.btnClearHistory.setVisibility(View.VISIBLE);
-                    scoreAdapter.updateList(scores);
+                    showScores(scores);
                 }
             }
         });
@@ -88,14 +82,35 @@ public class HistoryActivity extends AppCompatActivity {
                         editor.remove(KEY_BEST_SCORE_TOTAL);
                         editor.apply();
                         Toast.makeText(HistoryActivity.this, "Historique et meilleur score réinitialisés", Toast.LENGTH_SHORT).show();
-                        // Refresh LiveData
-                        viewModel = new ViewModelProvider(HistoryActivity.this).get(HistoryViewModel.class);
-                        viewModel.getScores().observe(HistoryActivity.this, scores -> {
-                            // UI will update via the observer defined in onCreate
-                        });
+                        showScores(new ArrayList<>());
                     }
                 })
                 .setNegativeButton("Annuler", null)
                 .show();
+    }
+
+    private void showScores(List<ScoreRecord> scores) {
+        boolean hasScores = scores != null && !scores.isEmpty();
+        binding.recyclerViewScores.setVisibility(hasScores ? View.VISIBLE : View.GONE);
+        binding.layoutEmptyState.setVisibility(hasScores ? View.GONE : View.VISIBLE);
+        binding.btnClearHistory.setVisibility(hasScores ? View.VISIBLE : View.GONE);
+        scoreAdapter.updateList(hasScores ? scores : new ArrayList<>());
+        updateSummary(hasScores ? scores : new ArrayList<>());
+    }
+
+    private void updateSummary(List<ScoreRecord> scores) {
+        int totalSessions = scores.size();
+        double averagePercentage = 0;
+
+        for (ScoreRecord score : scores) {
+            averagePercentage += score.getPercentage();
+        }
+
+        if (totalSessions > 0) {
+            averagePercentage = averagePercentage / totalSessions;
+        }
+
+        binding.txtTotalSessions.setText(String.valueOf(totalSessions));
+        binding.txtAverageScore.setText(String.format(java.util.Locale.getDefault(), "%.0f%%", averagePercentage));
     }
 }

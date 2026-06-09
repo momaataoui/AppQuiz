@@ -1,5 +1,7 @@
 package com.example.appquiz.ui;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,8 +12,6 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -22,6 +22,7 @@ import com.example.appquiz.R;
 import com.example.appquiz.database.DatabaseHelper;
 import com.example.appquiz.model.Question;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.text.SimpleDateFormat;
@@ -37,9 +38,13 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtQuestion;
     private TextView bestScoreText;
     private TextView txtTimer;
+    private TextView txtExplanation;
     private LinearProgressIndicator progressIndicator;
-    private RadioGroup optionsRadioGroup;
-    private final RadioButton[] optionButtons = new RadioButton[4];
+    private MaterialCardView timerCard;
+    private MaterialCardView explanationCard;
+    private final MaterialCardView[] optionCards = new MaterialCardView[4];
+    private final TextView[] optionTexts = new TextView[4];
+    private final TextView[] optionLetters = new TextView[4];
     private MaterialButton btnNext;
     private View btnGoToHistory;
 
@@ -47,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private int currentQuestionIndex = 0;
     private int score = 0;
     private boolean isAnswerChecked = false;
+    private int selectedOptionIndex = -1;
 
     private DatabaseHelper dbHelper;
     private SharedPreferences sharedPreferences;
@@ -74,11 +80,7 @@ public class MainActivity extends AppCompatActivity {
         loadQuestion(currentQuestionIndex);
         timer.start();
 
-        optionsRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId != -1 && !isAnswerChecked) {
-                btnNext.setEnabled(true);
-            }
-        });
+        setupOptionClickListeners();
 
         btnNext.setOnClickListener(v -> {
             if (!isAnswerChecked) {
@@ -108,26 +110,53 @@ public class MainActivity extends AppCompatActivity {
         txtCurrentScore = findViewById(R.id.txtCurrentScore);
         txtQuestion = findViewById(R.id.txtQuestion);
         progressIndicator = findViewById(R.id.progressIndicator);
-        optionsRadioGroup = findViewById(R.id.optionsRadioGroup);
         txtTimer = findViewById(R.id.txtTimer);
-        optionButtons[0] = findViewById(R.id.option1);
-        optionButtons[1] = findViewById(R.id.option2);
-        optionButtons[2] = findViewById(R.id.option3);
-        optionButtons[3] = findViewById(R.id.option4);
+        timerCard = findViewById(R.id.timerCard);
+        explanationCard = findViewById(R.id.explanationCard);
+        txtExplanation = findViewById(R.id.txtExplanation);
+        optionCards[0] = findViewById(R.id.option1);
+        optionCards[1] = findViewById(R.id.option2);
+        optionCards[2] = findViewById(R.id.option3);
+        optionCards[3] = findViewById(R.id.option4);
+        for (int i = 0; i < optionCards.length; i++) {
+            optionTexts[i] = optionCards[i].findViewById(R.id.txtOptionText);
+            optionLetters[i] = optionCards[i].findViewById(R.id.txtOptionLetter);
+        }
         btnNext = findViewById(R.id.btnNext);
         btnGoToHistory = findViewById(R.id.btnGoToHistory);
+    }
+
+    private void setupOptionClickListeners() {
+        for (int i = 0; i < optionCards.length; i++) {
+            final int optionIndex = i;
+            optionCards[i].setOnClickListener(v -> {
+                if (!isAnswerChecked) {
+                    selectedOptionIndex = optionIndex;
+                    updateSelectedOptionStyle();
+                    btnNext.setEnabled(true);
+                }
+            });
+        }
     }
 
     private void setupTimer() {
         timer = new CountDownTimer(TIME_PER_QUESTION, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                txtTimer.setText(String.valueOf(millisUntilFinished / 1000));
+                long secondsRemaining = millisUntilFinished / 1000;
+                txtTimer.setText(String.valueOf(secondsRemaining));
+                int timerColor = secondsRemaining < 5
+                        ? ContextCompat.getColor(MainActivity.this, R.color.timer_warning)
+                        : ContextCompat.getColor(MainActivity.this, R.color.primary);
+                txtTimer.setTextColor(timerColor);
+                timerCard.setStrokeColor(timerColor);
             }
 
             @Override
             public void onFinish() {
                 txtTimer.setText("0");
+                txtTimer.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.timer_warning));
+                timerCard.setStrokeColor(ContextCompat.getColor(MainActivity.this, R.color.timer_warning));
                 if (!isAnswerChecked) {
                     checkAnswer();
                 }
@@ -144,39 +173,52 @@ public class MainActivity extends AppCompatActivity {
                         "Initialiser l'activité et charger son layout XML",
                         "Gérer la base de données SQLite",
                         "Demander les permissions de l'application"
-                }, 1));
+                }, 1,
+                "onCreate() est appelee une seule fois lors de la creation initiale de l'activite. Elle sert generalement a connecter le layout XML, initialiser les vues et preparer les donnees."));
 
         questionList.add(new Question(
                 "Quel langage est historiquement le langage officiel du développement Android ?",
                 new String[]{"Python", "C++", "Java", "Swift"},
-                2));
+                2,
+                "Java a ete le langage principal d'Android depuis les premieres versions du SDK. Kotlin est aujourd'hui aussi officiel, mais Java reste tres present dans les projets existants."));
 
         questionList.add(new Question(
                 "Quelle classe SQLite facilite la création et la mise à jour de bases de données ?",
                 new String[]{"SQLiteOpenHelper", "SQLiteDatabase", "Cursor", "ContentValues"},
-                0));
+                0,
+                "SQLiteOpenHelper centralise la creation et les migrations via onCreate() et onUpgrade(). Cela evite de disperser la logique de structure de base de donnees dans l'application."));
 
         questionList.add(new Question(
                 "Quel composant affiche de longues listes de données de manière optimisée ?",
                 new String[]{"ScrollView", "ListView", "RecyclerView", "LinearLayout"},
-                2));
+                2,
+                "RecyclerView recycle les vues visibles au lieu de creer une vue pour chaque element. C'est le composant recommande pour les listes longues ou dynamiques."));
 
         questionList.add(new Question(
                 "Quel mécanisme stocke de simples paires clé-valeur persistantes sous Android ?",
                 new String[]{"La base de données SQLite", "SharedPreferences", "Les Intents", "Le Bundle"},
-                1));
+                1,
+                "SharedPreferences convient aux petites donnees simples comme un score, un theme ou un etat de preference. Pour des donnees structurees ou volumineuses, SQLite ou Room est plus adapte."));
     }
 
     private void loadQuestion(int index) {
         Question question = questionList.get(index);
         txtQuestion.setText(question.getQuestionText());
 
-        optionsRadioGroup.clearCheck();
-        for (int i = 0; i < optionButtons.length; i++) {
-            optionButtons[i].setText(question.getOptions().get(i));
-            optionButtons[i].setEnabled(true);
-            optionButtons[i].setBackgroundResource(R.drawable.option_selector);
-            optionButtons[i].setTextColor(ContextCompat.getColor(this, R.color.text_primary));
+        selectedOptionIndex = -1;
+        explanationCard.setVisibility(View.GONE);
+        explanationCard.setAlpha(0f);
+        explanationCard.setTranslationY(40f);
+        txtTimer.setText("15");
+        txtTimer.setTextColor(ContextCompat.getColor(this, R.color.primary));
+        timerCard.setStrokeColor(ContextCompat.getColor(this, R.color.primary));
+
+        for (int i = 0; i < optionCards.length; i++) {
+            optionTexts[i].setText(question.getOptions().get(i));
+            optionLetters[i].setText(String.valueOf((char) ('A' + i)));
+            optionCards[i].setEnabled(true);
+            optionCards[i].setClickable(true);
+            applyOptionStyle(i, R.color.card_background, R.color.border_color, R.color.text_primary);
         }
 
         txtProgress.setText(getString(R.string.question_progress, index + 1, questionList.size()));
@@ -208,19 +250,20 @@ public class MainActivity extends AppCompatActivity {
 
         if (selectedIndex != -1 && selectedIndex != correctIndex) {
             Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-            optionButtons[selectedIndex].startAnimation(shake);
+            optionCards[selectedIndex].startAnimation(shake);
         }
 
-        for (int i = 0; i < optionButtons.length; i++) {
-            optionButtons[i].setEnabled(false);
+        for (int i = 0; i < optionCards.length; i++) {
+            optionCards[i].setEnabled(false);
+            optionCards[i].setClickable(false);
             if (i == correctIndex) {
-                optionButtons[i].setBackgroundResource(R.drawable.option_correct);
-                optionButtons[i].setTextColor(ContextCompat.getColor(this, R.color.correct_text));
+                applyOptionStyle(i, R.color.correct_bg, R.color.correct_border, R.color.correct_text);
             } else if (i == selectedIndex) {
-                optionButtons[i].setBackgroundResource(R.drawable.option_incorrect);
-                optionButtons[i].setTextColor(ContextCompat.getColor(this, R.color.incorrect_text));
+                applyOptionStyle(i, R.color.incorrect_bg, R.color.incorrect_border, R.color.incorrect_text);
             }
         }
+
+        showExplanation(question.getExplanation());
 
         btnNext.setText(currentQuestionIndex == questionList.size() - 1
                 ? getString(R.string.btn_finish)
@@ -229,13 +272,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int getSelectedOptionIndex() {
-        int selectedRadioButtonId = optionsRadioGroup.getCheckedRadioButtonId();
-        for (int i = 0; i < optionButtons.length; i++) {
-            if (optionButtons[i].getId() == selectedRadioButtonId) {
-                return i;
+        return selectedOptionIndex;
+    }
+
+    private void updateSelectedOptionStyle() {
+        for (int i = 0; i < optionCards.length; i++) {
+            if (i == selectedOptionIndex) {
+                applyOptionStyle(i, R.color.selected_bg, R.color.selected_border, R.color.primary);
+            } else {
+                applyOptionStyle(i, R.color.card_background, R.color.border_color, R.color.text_primary);
             }
         }
-        return -1;
+    }
+
+    private void applyOptionStyle(int index, int backgroundColorRes, int strokeColorRes, int textColorRes) {
+        int backgroundColor = ContextCompat.getColor(this, backgroundColorRes);
+        int strokeColor = ContextCompat.getColor(this, strokeColorRes);
+        int textColor = ContextCompat.getColor(this, textColorRes);
+        optionCards[index].setCardBackgroundColor(backgroundColor);
+        optionCards[index].setStrokeColor(strokeColor);
+        optionTexts[index].setTextColor(textColor);
+        optionLetters[index].setTextColor(textColor);
+    }
+
+    private void showExplanation(String explanation) {
+        txtExplanation.setText(explanation);
+        explanationCard.setVisibility(View.VISIBLE);
+        explanationCard.setAlpha(0f);
+        explanationCard.setTranslationY(40f);
+
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(explanationCard, View.ALPHA, 0f, 1f);
+        ObjectAnimator slideUp = ObjectAnimator.ofFloat(explanationCard, View.TRANSLATION_Y, 40f, 0f);
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(fadeIn, slideUp);
+        animatorSet.setDuration(350);
+        animatorSet.start();
     }
 
     private void finishQuiz() {

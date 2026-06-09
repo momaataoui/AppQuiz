@@ -19,9 +19,8 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="16dp"
             app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:strokeColor="@color/border_color"
-            app:strokeWidth="1dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:strokeWidth="0dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -29,6 +28,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/header_gradient"
                 android:padding="16dp">
 
                 <TextView
@@ -36,7 +36,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/app_name"
-                    android:textColor="@color/primary"
+                    android:textColor="@color/text_white"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="parent"
@@ -47,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/no_best_score"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     app:layout_constraintTop_toBottomOf="@id/appTitle"
                     app:layout_constraintStart_toStartOf="parent"
@@ -59,7 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:icon="@android:drawable/ic_menu_myplaces"
-                    app:iconTint="@color/primary"
+                    app:iconTint="@color/text_white"
                     android:tooltipText="@string/title_history"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -69,12 +69,10 @@
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Progress and Current Score Header -->
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/progressLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2"
             android:layout_marginTop="20dp"
             app:layout_constraintTop_toBottomOf="@id/headerCard"
             app:layout_constraintStart_toStartOf="parent"
@@ -82,37 +80,55 @@
 
             <TextView
                 android:id="@+id/txtProgress"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Question 1 / 5"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/txtCurrentScore"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_marginHorizontal="12dp"
                 android:text="Score: 0"
                 android:textAlignment="viewEnd"
                 android:textColor="@color/primary"
                 android:textSize="16sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/txtProgress"
+                app:layout_constraintEnd_toStartOf="@id/timerCard" />
 
-        <TextView
-            android:id="@+id/txtTimer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="15"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@id/progressLayout"
-            app:layout_constraintStart_toStartOf="parent" />
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/timerCard"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="26dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/primary"
+                app:strokeWidth="2dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/txtTimer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="15"
+                    android:textColor="@color/primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Progress Indicator -->
         <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -121,7 +137,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             app:trackColor="@color/border_color"
-            app:indicatorColor="@color/primary"
+            app:indicatorColor="@color/accent"
             app:trackCornerRadius="4dp"
             app:layout_constraintTop_toBottomOf="@id/progressLayout"
             app:layout_constraintStart_toStartOf="parent"
@@ -135,7 +151,7 @@
             android:layout_marginTop="20dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="3dp"
-            app:cardBackgroundColor="@color/card_background"
+            app:cardBackgroundColor="@android:color/transparent"
             app:strokeColor="@color/border_color"
             app:strokeWidth="1dp"
             app:layout_constraintTop_toBottomOf="@id/progressIndicator"
@@ -146,6 +162,7 @@
                 android:id="@+id/txtQuestion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/question_card_bg"
                 android:padding="24dp"
                 android:text="Ici s'affichera la question ?"
                 android:textColor="@color/text_primary"
@@ -154,9 +171,9 @@
                 android:textStyle="bold" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Options Choice RadioGroup -->
-        <RadioGroup
-            android:id="@+id/optionsRadioGroup"
+        <!-- Options Choice Cards -->
+        <LinearLayout
+            android:id="@+id/optionsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -165,55 +182,65 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <RadioButton
+            <include
                 android:id="@+id/option1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:button="@null"
-                android:background="@drawable/option_selector"
-                android:padding="16dp"
-                android:text="Option 1"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp" />
+                layout="@layout/item_option" />
 
-            <RadioButton
+            <include
                 android:id="@+id/option2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:button="@null"
-                android:background="@drawable/option_selector"
-                android:padding="16dp"
-                android:text="Option 2"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp" />
+                layout="@layout/item_option" />
 
-            <RadioButton
+            <include
                 android:id="@+id/option3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:button="@null"
-                android:background="@drawable/option_selector"
-                android:padding="16dp"
-                android:text="Option 3"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp" />
+                layout="@layout/item_option" />
 
-            <RadioButton
+            <include
                 android:id="@+id/option4"
+                layout="@layout/item_option" />
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/explanationCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:strokeColor="@color/border_color"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toBottomOf="@id/optionsContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:button="@null"
-                android:background="@drawable/option_selector"
-                android:padding="16dp"
-                android:text="Option 4"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp" />
+                android:background="@drawable/question_card_bg"
+                android:orientation="vertical"
+                android:padding="18dp">
 
-        </RadioGroup>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=" Explication"
+                    android:textColor="@color/primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtExplanation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingMultiplier="1.4"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="15sp"
+                    tools:text="Une explication courte apparait apres la reponse." />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Next Action Button -->
         <com.google.android.material.button.MaterialButton
@@ -225,10 +252,11 @@
             android:textSize="16sp"
             android:textStyle="bold"
             app:cornerRadius="12dp"
-            app:backgroundTint="@color/primary"
+            android:background="@drawable/header_gradient"
+            app:backgroundTint="@null"
             android:textColor="@color/text_white"
             android:enabled="false"
-            app:layout_constraintTop_toBottomOf="@id/optionsRadioGroup"
+            app:layout_constraintTop_toBottomOf="@id/explanationCard"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

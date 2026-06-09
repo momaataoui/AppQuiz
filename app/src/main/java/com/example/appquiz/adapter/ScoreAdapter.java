@@ -43,24 +43,24 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ScoreViewHol
         holder.txtBadgePercentage.setText(String.format("%.0f%%", percentage));
 
         // Dynamic styling based on performance
-        if (percentage >= 70) {
-            holder.cardScoreBadge.setCardBackgroundColor(ContextCompat.getColor(context, R.color.correct_bg));
-            holder.cardScoreBadge.setStrokeColor(ContextCompat.getColor(context, R.color.correct_border));
-            holder.txtBadgePercentage.setTextColor(ContextCompat.getColor(context, R.color.correct_text));
+        if (percentage >= 80) {
+            holder.cardScoreBadge.setCardBackgroundColor(ContextCompat.getColor(context, R.color.badge_good));
+            holder.cardScoreBadge.setStrokeColor(ContextCompat.getColor(context, R.color.badge_good));
+            holder.txtBadgePercentage.setTextColor(ContextCompat.getColor(context, R.color.text_white));
             
             holder.txtPerformanceLabel.setText("Excellent");
             holder.txtPerformanceLabel.setTextColor(ContextCompat.getColor(context, R.color.correct_text));
-        } else if (percentage >= 50) {
-            holder.cardScoreBadge.setCardBackgroundColor(ContextCompat.getColor(context, R.color.selected_bg));
-            holder.cardScoreBadge.setStrokeColor(ContextCompat.getColor(context, R.color.selected_border));
-            holder.txtBadgePercentage.setTextColor(ContextCompat.getColor(context, R.color.primary));
+        } else if (percentage >= 60) {
+            holder.cardScoreBadge.setCardBackgroundColor(ContextCompat.getColor(context, R.color.badge_medium));
+            holder.cardScoreBadge.setStrokeColor(ContextCompat.getColor(context, R.color.badge_medium));
+            holder.txtBadgePercentage.setTextColor(ContextCompat.getColor(context, R.color.text_white));
             
             holder.txtPerformanceLabel.setText("Moyen");
-            holder.txtPerformanceLabel.setTextColor(ContextCompat.getColor(context, R.color.primary));
+            holder.txtPerformanceLabel.setTextColor(ContextCompat.getColor(context, R.color.badge_medium));
         } else {
-            holder.cardScoreBadge.setCardBackgroundColor(ContextCompat.getColor(context, R.color.incorrect_bg));
-            holder.cardScoreBadge.setStrokeColor(ContextCompat.getColor(context, R.color.incorrect_border));
-            holder.txtBadgePercentage.setTextColor(ContextCompat.getColor(context, R.color.incorrect_text));
+            holder.cardScoreBadge.setCardBackgroundColor(ContextCompat.getColor(context, R.color.badge_poor));
+            holder.cardScoreBadge.setStrokeColor(ContextCompat.getColor(context, R.color.badge_poor));
+            holder.txtBadgePercentage.setTextColor(ContextCompat.getColor(context, R.color.text_white));
             
             holder.txtPerformanceLabel.setText("À réviser");
             holder.txtPerformanceLabel.setTextColor(ContextCompat.getColor(context, R.color.incorrect_text));

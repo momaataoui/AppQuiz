@@ -38,23 +38,28 @@ public class QuizRepository {
         list.add(new Question(
                 "Quel est le rôle principal de la méthode onCreate() dans une activité Android ?",
                 new String[]{"Démarrer un service en arrière-plan", "Initialiser l'activité et charger son layout XML", "Gérer la base de données SQLite", "Demander les permissions de l'application"},
-                1));
+                1,
+                "onCreate() est appelee une seule fois lors de la creation initiale de l'activite. Elle sert generalement a connecter le layout XML, initialiser les vues et preparer les donnees."));
         list.add(new Question(
                 "Quel langage est historiquement le langage officiel du développement Android ?",
                 new String[]{"Python", "C++", "Java", "Swift"},
-                2));
+                2,
+                "Java a ete le langage principal d'Android depuis les premieres versions du SDK. Kotlin est aujourd'hui aussi officiel, mais Java reste tres present dans les projets existants."));
         list.add(new Question(
                 "Quelle classe SQLite facilite la création et la mise à jour de bases de données ?",
                 new String[]{"SQLiteOpenHelper", "SQLiteDatabase", "Cursor", "ContentValues"},
-                0));
+                0,
+                "SQLiteOpenHelper centralise la creation et les migrations via onCreate() et onUpgrade(). Cela evite de disperser la logique de structure de base de donnees dans l'application."));
         list.add(new Question(
                 "Quel composant affiche de longues listes de données de manière optimisée ?",
                 new String[]{"ScrollView", "ListView", "RecyclerView", "LinearLayout"},
-                2));
+                2,
+                "RecyclerView recycle les vues visibles au lieu de creer une vue pour chaque element. C'est le composant recommande pour les listes longues ou dynamiques."));
         list.add(new Question(
                 "Quel mécanisme stocke de simples paires clé‑valeur persistantes sous Android ?",
                 new String[]{"La base de données SQLite", "SharedPreferences", "Les Intents", "Le Bundle"},
-                1));
+                1,
+                "SharedPreferences convient aux petites donnees simples comme un score, un theme ou un etat de preference. Pour des donnees structurees ou volumineuses, SQLite ou Room est plus adapte."));
         questionsLiveData.setValue(list);
     }
 
