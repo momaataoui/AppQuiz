@@ -1,34 +1,32 @@
-package com.example.appquiz;
+package com.example.appquiz.ui;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.appquiz.adapter.ScoreAdapter;
 import com.example.appquiz.database.DatabaseHelper;
+import com.example.appquiz.databinding.ActivityHistoryBinding;
 import com.example.appquiz.model.ScoreRecord;
+import com.example.appquiz.viewmodel.HistoryViewModel;
 import com.google.android.material.button.MaterialButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerViewScores;
+    private ActivityHistoryBinding binding;
+    private HistoryViewModel viewModel;
     private ScoreAdapter scoreAdapter;
-    private List<ScoreRecord> scoreRecordList;
-    private LinearLayout layoutEmptyState;
-    private MaterialButton btnClearHistory;
-    private View btnBack;
-
     private DatabaseHelper dbHelper;
 
     private static final String PREFS_NAME = "QuizPrefs";
@@ -38,54 +36,40 @@ public class HistoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
+        binding = ActivityHistoryBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        // Bind Views
-        recyclerViewScores = findViewById(R.id.recyclerViewScores);
-        layoutEmptyState = findViewById(R.id.layoutEmptyState);
-        btnClearHistory = findViewById(R.id.btnClearHistory);
-        btnBack = findViewById(R.id.btnBack);
-
+        // Initialize helpers
         dbHelper = new DatabaseHelper(this);
+        viewModel = new ViewModelProvider(this).get(HistoryViewModel.class);
 
         // Setup RecyclerView
-        recyclerViewScores.setLayoutManager(new LinearLayoutManager(this));
-        scoreRecordList = new ArrayList<>();
-        scoreAdapter = new ScoreAdapter(scoreRecordList);
-        recyclerViewScores.setAdapter(scoreAdapter);
+        binding.recyclerViewScores.setLayoutManager(new LinearLayoutManager(this));
+        scoreAdapter = new ScoreAdapter(new java.util.ArrayList<>());
+        binding.recyclerViewScores.setAdapter(scoreAdapter);
 
-        // Load scores from SQLite
-        loadScores();
-
-        // Listeners
-        btnBack.setOnClickListener(new View.OnClickListener() {
+        // Observe scores LiveData
+        viewModel.getScores().observe(this, new Observer<List<ScoreRecord>>() {
             @Override
-            public void onClick(View v) {
-                finish();
+            public void onChanged(List<ScoreRecord> scores) {
+                if (scores == null || scores.isEmpty()) {
+                    binding.recyclerViewScores.setVisibility(View.GONE);
+                    binding.layoutEmptyState.setVisibility(View.VISIBLE);
+                    binding.btnClearHistory.setVisibility(View.GONE);
+                } else {
+                    binding.recyclerViewScores.setVisibility(View.VISIBLE);
+                    binding.layoutEmptyState.setVisibility(View.GONE);
+                    binding.btnClearHistory.setVisibility(View.VISIBLE);
+                    scoreAdapter.updateList(scores);
+                }
             }
         });
 
-        btnClearHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showClearConfirmationDialog();
-            }
-        });
-    }
+        // Back button listener
+        binding.btnBack.setOnClickListener(v -> finish());
 
-    private void loadScores() {
-        scoreRecordList = dbHelper.getAllScores();
-        
-        if (scoreRecordList.isEmpty()) {
-            recyclerViewScores.setVisibility(View.GONE);
-            layoutEmptyState.setVisibility(View.VISIBLE);
-            btnClearHistory.setVisibility(View.GONE);
-        } else {
-            recyclerViewScores.setVisibility(View.VISIBLE);
-            layoutEmptyState.setVisibility(View.GONE);
-            btnClearHistory.setVisibility(View.VISIBLE);
-            scoreAdapter.updateList(scoreRecordList);
-        }
+        // Clear history button listener
+        binding.btnClearHistory.setOnClickListener(v -> showClearConfirmationDialog());
     }
 
     private void showClearConfirmationDialog() {
@@ -97,16 +81,18 @@ public class HistoryActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // Clear database
                         dbHelper.clearHistory();
-
                         // Clear SharedPreferences
                         SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.remove(KEY_BEST_SCORE);
                         editor.remove(KEY_BEST_SCORE_TOTAL);
                         editor.apply();
-
                         Toast.makeText(HistoryActivity.this, "Historique et meilleur score réinitialisés", Toast.LENGTH_SHORT).show();
-                        loadScores();
+                        // Refresh LiveData
+                        viewModel = new ViewModelProvider(HistoryActivity.this).get(HistoryViewModel.class);
+                        viewModel.getScores().observe(HistoryActivity.this, scores -> {
+                            // UI will update via the observer defined in onCreate
+                        });
                     }
                 })
                 .setNegativeButton("Annuler", null)

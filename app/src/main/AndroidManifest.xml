@@ -8,26 +8,24 @@
         android:roundIcon="@android:mipmap/sym_def_app_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppQuiz">
-        
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
+
+        <activity android:name="com.example.appquiz.ui.MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
         <activity
-            android:name=".HistoryActivity"
+            android:name="com.example.appquiz.ui.HistoryActivity"
             android:exported="false"
             android:label="@string/title_history"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.example.appquiz.ui.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.example.appquiz.ui.MainActivity" />
         </activity>
-        
+
     </application>
 
 </manifest>
