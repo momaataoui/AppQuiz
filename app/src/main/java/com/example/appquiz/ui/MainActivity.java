@@ -2,7 +2,6 @@ package com.example.appquiz.ui;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
@@ -12,6 +11,7 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -326,36 +326,77 @@ public class MainActivity extends AppCompatActivity {
         String currentDate = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date());
         dbHelper.addScore(score, questionList.size(), currentDate);
 
-        String recordMsg = isNewRecord ? getString(R.string.new_record_yes) : getString(R.string.new_record_no);
-        String dialogMessage = getString(R.string.quiz_completed_msg, score, questionList.size(), recordMsg);
+        // Inflate custom dialog
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_quiz_result, null);
 
-        new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.quiz_completed_title))
-                .setMessage(dialogMessage)
+        // Bind views
+        TextView txtResultEmoji = dialogView.findViewById(R.id.txtResultEmoji);
+        TextView txtResultTitle = dialogView.findViewById(R.id.txtResultTitle);
+        TextView txtResultScore = dialogView.findViewById(R.id.txtResultScore);
+        TextView txtRecordBadge = dialogView.findViewById(R.id.txtRecordBadge);
+        TextView txtResultSubtitle = dialogView.findViewById(R.id.txtResultSubtitle);
+        LinearLayout starRow = dialogView.findViewById(R.id.starRow);
+        MaterialButton btnHistory = dialogView.findViewById(R.id.btnDialogHistory);
+        MaterialButton btnRestart = dialogView.findViewById(R.id.btnDialogRestart);
+        MaterialButton btnShare = dialogView.findViewById(R.id.btnDialogShare);
+
+        // Set emoji + title based on score
+        String[] emojis = {"", "", "", "", "⭐", ""};
+        String[] titles = {"Continue !", "Continue !", "Continue !", "Bien joué !", "Excellent !", "Parfait !"};
+        txtResultEmoji.setText(emojis[score]);
+        txtResultTitle.setText(titles[score]);
+        txtResultScore.setText(score + " / " + questionList.size());
+        txtResultSubtitle.setText("Votre score final est de " + score + " sur " + questionList.size());
+
+        // Stars
+        starRow.removeAllViews();
+        for (int i = 0; i < questionList.size(); i++) {
+            TextView star = new TextView(this);
+            star.setText(i < score ? "⭐" : "☆");
+            star.setTextSize(22);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(4, 0, 4, 0);
+            star.setLayoutParams(lp);
+            starRow.addView(star);
+        }
+
+        // Record badge
+        if (isNewRecord) {
+            txtRecordBadge.setVisibility(View.VISIBLE);
+        } else {
+            txtRecordBadge.setVisibility(View.GONE);
+        }
+
+        // Build and show dialog
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
                 .setCancelable(false)
-                .setPositiveButton(getString(R.string.btn_history), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startActivity(new Intent(MainActivity.this, HistoryActivity.class));
-                        resetQuiz();
-                    }
-                })
-                .setNegativeButton(getString(R.string.btn_restart), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        resetQuiz();
-                    }
-                })
-                .setNeutralButton("Partager", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                        shareIntent.setType("text/plain");
-                        shareIntent.putExtra(Intent.EXTRA_TEXT, dialogMessage);
-                        startActivity(Intent.createChooser(shareIntent, "Partager le score"));
-                    }
-                })
-                .show();
+                .create();
+
+        btnHistory.setOnClickListener(v -> {
+            dialog.dismiss();
+            startActivity(new Intent(MainActivity.this, HistoryActivity.class));
+            resetQuiz();
+        });
+        btnRestart.setOnClickListener(v -> {
+            dialog.dismiss();
+            resetQuiz();
+        });
+        btnShare.setOnClickListener(v -> {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT,
+                    "J'ai obtenu " + score + "/" + questionList.size() + " au Quiz Éducatif Android ! ");
+            startActivity(Intent.createChooser(shareIntent, "Partager le score"));
+        });
+
+        dialog.show();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
     }
 
     private void resetQuiz() {
