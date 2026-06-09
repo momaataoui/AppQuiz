@@ -220,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupQuestions() {
         questionList = new ArrayList<>();
         questionList.add(new Question(
+                "android",
                 "Quel est le rôle principal de la méthode onCreate() dans une activité Android ?",
                 new String[]{
                         "Démarrer un service en arrière-plan",
@@ -230,28 +231,172 @@ public class MainActivity extends AppCompatActivity {
                 "onCreate() est appelee une seule fois lors de la creation initiale de l'activite. Elle sert generalement a connecter le layout XML, initialiser les vues et preparer les donnees."));
 
         questionList.add(new Question(
+                "android",
                 "Quel langage est historiquement le langage officiel du développement Android ?",
                 new String[]{"Python", "C++", "Java", "Swift"},
                 2,
                 "Java a ete le langage principal d'Android depuis les premieres versions du SDK. Kotlin est aujourd'hui aussi officiel, mais Java reste tres present dans les projets existants."));
 
         questionList.add(new Question(
+                "android",
                 "Quelle classe SQLite facilite la création et la mise à jour de bases de données ?",
                 new String[]{"SQLiteOpenHelper", "SQLiteDatabase", "Cursor", "ContentValues"},
                 0,
                 "SQLiteOpenHelper centralise la creation et les migrations via onCreate() et onUpgrade(). Cela evite de disperser la logique de structure de base de donnees dans l'application."));
 
         questionList.add(new Question(
+                "android",
                 "Quel composant affiche de longues listes de données de manière optimisée ?",
                 new String[]{"ScrollView", "ListView", "RecyclerView", "LinearLayout"},
                 2,
                 "RecyclerView recycle les vues visibles au lieu de creer une vue pour chaque element. C'est le composant recommande pour les listes longues ou dynamiques."));
 
         questionList.add(new Question(
+                "android",
                 "Quel mécanisme stocke de simples paires clé-valeur persistantes sous Android ?",
                 new String[]{"La base de données SQLite", "SharedPreferences", "Les Intents", "Le Bundle"},
                 1,
                 "SharedPreferences convient aux petites donnees simples comme un score, un theme ou un etat de preference. Pour des donnees structurees ou volumineuses, SQLite ou Room est plus adapte."));
+
+        questionList.add(new Question(
+                "python",
+                "Quel mot-clé définit une fonction en Python ?",
+                new String[]{"def", "function", "fun", "define"},
+                0,
+                "En Python, `def` est le mot-clé utilisé pour déclarer une fonction."));
+
+        questionList.add(new Question(
+                "python",
+                "Quel type de données est immuable en Python ?",
+                new String[]{"list", "dict", "tuple", "set"},
+                2,
+                "Un tuple ne peut pas être modifié après sa création, contrairement à une liste."));
+
+        questionList.add(new Question(
+                "python",
+                "Comment ouvre-t-on un fichier en lecture en Python ?",
+                new String[]{"open(f,'w')", "open(f,'r')", "read(f)", "file.open(f)"},
+                1,
+                "open(fichier, 'r') ouvre un fichier en mode lecture."));
+
+        questionList.add(new Question(
+                "python",
+                "Quelle bibliothèque est utilisée pour la data science en Python ?",
+                new String[]{"NumPy", "Django", "Flask", "Tkinter"},
+                0,
+                "NumPy est la bibliothèque fondamentale pour le calcul scientifique en Python."));
+
+        questionList.add(new Question(
+                "python",
+                "Comment hérite-t-on d'une classe en Python ?",
+                new String[]{"class B extends A", "class B(A)", "B inherits A", "def B from A"},
+                1,
+                "En Python, l'héritage se fait en passant la classe parente entre parenthèses."));
+
+        questionList.add(new Question(
+                "reseaux",
+                "Quel protocole attribue automatiquement les adresses IP ?",
+                new String[]{"DNS", "FTP", "DHCP", "HTTP"},
+                2,
+                "DHCP (Dynamic Host Configuration Protocol) assigne dynamiquement les adresses IP."));
+
+        questionList.add(new Question(
+                "reseaux",
+                "Sur quel port écoute HTTPS par défaut ?",
+                new String[]{"80", "21", "443", "8080"},
+                2,
+                "HTTPS utilise le port 443, tandis que HTTP utilise le port 80."));
+
+        questionList.add(new Question(
+                "reseaux",
+                "Qu'est-ce qu'une attaque de type Man-in-the-Middle ?",
+                new String[]{"Virus qui efface des fichiers", "Interception des communications entre deux parties", "Surcharge d'un serveur", "Vol de mot de passe par force brute"},
+                1,
+                "Dans une attaque MitM, l'attaquant s'interpose entre deux parties pour intercepter ou modifier les données."));
+
+        questionList.add(new Question(
+                "reseaux",
+                "Quel outil est utilisé pour scanner les ports ouverts ?",
+                new String[]{"Wireshark", "Nmap", "Metasploit", "Burp Suite"},
+                1,
+                "Nmap est l'outil de référence pour la découverte de réseau et l'audit de sécurité."));
+
+        questionList.add(new Question(
+                "reseaux",
+                "Que signifie VPN ?",
+                new String[]{"Virtual Private Network", "Visual Protocol Node", "Verified Public Network", "Virtual Protocol Name"},
+                0,
+                "Un VPN crée un tunnel chiffré pour sécuriser les communications sur un réseau public."));
+
+        questionList.add(new Question(
+                "sql",
+                "Quelle commande SQL récupère des données ?",
+                new String[]{"INSERT", "UPDATE", "SELECT", "DELETE"},
+                2,
+                "SELECT est la commande fondamentale pour interroger et récupérer des données."));
+
+        questionList.add(new Question(
+                "sql",
+                "Quel mot-clé filtre les résultats d'une requête ?",
+                new String[]{"ORDER BY", "GROUP BY", "WHERE", "HAVING"},
+                2,
+                "WHERE filtre les lignes avant l'agrégation, contrairement à HAVING."));
+
+        questionList.add(new Question(
+                "sql",
+                "Quelle fonction SQL compte le nombre de lignes ?",
+                new String[]{"SUM()", "AVG()", "COUNT()", "MAX()"},
+                2,
+                "COUNT(*) retourne le nombre total de lignes dans un résultat."));
+
+        questionList.add(new Question(
+                "sql",
+                "Qu'est-ce qu'une clé primaire ?",
+                new String[]{"Une colonne nullable", "Un index dupliqué", "Un identifiant unique pour chaque ligne", "Une clé étrangère"},
+                2,
+                "La clé primaire identifie de manière unique chaque enregistrement dans une table."));
+
+        questionList.add(new Question(
+                "sql",
+                "Quel type de JOIN retourne toutes les lignes des deux tables ?",
+                new String[]{"INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER JOIN"},
+                3,
+                "FULL OUTER JOIN retourne toutes les lignes des deux tables, avec NULL si pas de correspondance."));
+
+        questionList.add(new Question(
+                "linux",
+                "Quelle commande affiche le répertoire courant ?",
+                new String[]{"ls", "cd", "pwd", "mkdir"},
+                2,
+                "pwd (Print Working Directory) affiche le chemin absolu du répertoire actuel."));
+
+        questionList.add(new Question(
+                "linux",
+                "Quelle commande change les permissions d'un fichier ?",
+                new String[]{"chown", "chmod", "chgrp", "ls -l"},
+                1,
+                "chmod modifie les droits d'accès (lecture, écriture, exécution) d'un fichier."));
+
+        questionList.add(new Question(
+                "linux",
+                "Que fait la commande grep ?",
+                new String[]{"Copie des fichiers", "Recherche un motif dans un fichier", "Supprime des répertoires", "Affiche l'espace disque"},
+                1,
+                "grep (Global Regular Expression Print) cherche des lignes correspondant à un motif."));
+
+        questionList.add(new Question(
+                "linux",
+                "Quel signal envoie kill -9 ?",
+                new String[]{"SIGTERM", "SIGHUP", "SIGKILL", "SIGSTOP"},
+                2,
+                "SIGKILL (signal 9) force l'arrêt immédiat d'un processus sans nettoyage."));
+
+        questionList.add(new Question(
+                "linux",
+                "Quelle commande liste les processus en cours ?",
+                new String[]{"top", "ls", "df", "cat"},
+                0,
+                "top affiche en temps réel les processus actifs et leur consommation de ressources."));
     }
 
     private void loadQuestion(int index) {
@@ -456,12 +601,17 @@ public class MainActivity extends AppCompatActivity {
         currentQuestionIndex = 0;
         score = 0;
         txtCurrentScore.setText(getString(R.string.current_score, score));
-        loadQuestion(currentQuestionIndex);
         if (timer != null) {
             timer.cancel();
         }
-        setupTimer();
-        timer.start();
+        isInCategorySelection = true;
+
+        quizLayout.animate().alpha(0f).setDuration(200).withEndAction(() -> {
+            quizLayout.setVisibility(View.GONE);
+            categoryLayout.setVisibility(View.VISIBLE);
+            categoryLayout.setAlpha(0f);
+            categoryLayout.animate().alpha(1f).setDuration(300).start();
+        }).start();
     }
 
     private void updateBestScoreDisplay() {
